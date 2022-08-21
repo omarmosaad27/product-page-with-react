@@ -1,26 +1,28 @@
 import React from 'react'
-import { useGlobalContext } from '../Context'
+import {closeLightBox} from '../redux/LightboxSlice'
 import { FiChevronRight, FiChevronLeft } from 'react-icons/fi'
 import {AiOutlineClose} from 'react-icons/ai'
-const LightBox = () => {
-    const { image, thumb, setValue,value,nextSlide,setLightBox,prevSlide} = useGlobalContext();
+import { useDispatch,useSelector } from 'react-redux'
+const LightBox = ({nextSlide,prevSlide,value,setValue}) => {
+    const {  thumbs ,images} = useSelector(state => state.lightBox)
+    const dispatch = useDispatch()
     
     return (
         <>
         <div className="lightbox">
             
             <div className="main-image">
-                    <img src={image.product} alt="main" />
+                    <img src={images[value].product} alt="main" />
                     <div className="btns">
-                        <FiChevronLeft onClick={prevSlide} className="icon-right"/>
-                        <FiChevronRight onClick={nextSlide} className="icon-left"/>
+                        <FiChevronLeft  className="icon-right" onClick={prevSlide}/>
+                        <FiChevronRight  className="icon-left" onClick={nextSlide}/>
                     </div>
-                    <AiOutlineClose className='close-lightbox' onClick={()=>setLightBox(false)}/>
+                    <AiOutlineClose className='close-lightbox' onClick={()=>dispatch(closeLightBox())}/>
 
             </div>
             <div className="thumbs">
                 {
-                        thumb.map((item,index) => {
+                        thumbs.map((item,index) => {
                         const { id, product } = item;
                         return (
                             <button className={`${index === value ? "thumb active" : "thumb"}`}  key={id} onClick={()=>setValue(index)}>

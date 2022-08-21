@@ -1,15 +1,15 @@
 import React from 'react'
 import {AiOutlineShoppingCart } from 'react-icons/ai'
-
-import { useGlobalContext } from '../Context'
+import { useSelector,useDispatch } from 'react-redux'
+import {addtoCart,calculateTotals,increaseAmount,decreaseAmount} from '../redux/CartSlice.js'
 const ProductInfo = () => {
-  const { state: { products }, dispatch, state: { cart } } = useGlobalContext();
-  
+  const { product,amount } = useSelector(state => state.cart)
+  const dispatch = useDispatch()
   return (
     <div className="product-info">
       {
-        products.map((product) => {
-          const { id, company, name, desc, price, oldprice, discount } = product;
+        product.map((item) => {
+          const { id, company, name, desc, price, oldprice, discount } = item;
           return (
             <div className="info" key={id}>
               <h4 className="company">{company}</h4>
@@ -24,32 +24,15 @@ const ProductInfo = () => {
               </div>
               <div className="info-footer flex">
                 <div className="amount-container">
-                  <button onClick={() => {
-                  dispatch({
-                    type: "DECREASE" ,
-                    payload: id 
-                  })
-                }}>-</button>
+                  <button onClick={()=>dispatch(decreaseAmount(id))}>-</button>
                   <div className="amount">
-                    {cart.length === 0 ? 0 :
-                      cart.map((i) => {
-                        const { amount } = i; 
-                        return amount
-                      })
-                    }
+                    {amount}
                   </div>
-                  <button  onClick={() => {
-                  dispatch({
-                    type: "INCREASE" ,
-                    payload: id 
-                  })
-                }}>+</button>
+                  <button onClick={()=>dispatch(increaseAmount(id))} >+</button>
                 </div>
                 <button className="orange btn" onClick={() => {
-                  dispatch({
-                    type: "ADD_TO_CART",
-                    payload: product
-                  })
+                  dispatch(addtoCart(id))
+                  dispatch(calculateTotals())
                 }}>
                   <AiOutlineShoppingCart />
                   Add To Cart
